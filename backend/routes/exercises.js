@@ -90,6 +90,31 @@ router.get('/search', async (req, res) => {
   }
 });
 
+// Helper to map external values to valid enums
+const mapCategory = (externalCategory) => {
+  const validCategories = ['Strength', 'Cardio', 'Flexibility', 'Balance'];
+  const upperCat = externalCategory ? externalCategory.toUpperCase() : '';
+  
+  if (upperCat.includes('CARDIO')) return 'Cardio';
+  if (upperCat.includes('STRENGTH') || upperCat.includes('POWER') || upperCat.includes('OLYMPIC')) return 'Strength';
+  if (upperCat.includes('PLYOMETRICS')) return 'Cardio';
+  if (upperCat.includes('STRETCHING')) return 'Flexibility';
+  return 'Strength'; // Default
+};
+
+const mapMuscleGroup = (externalMuscle) => {
+  const validGroups = ['Chest', 'Back', 'Legs', 'Arms', 'Shoulders', 'Abs', 'Full Body'];
+  const upperMuscle = externalMuscle ? externalMuscle.toUpperCase() : '';
+
+  if (upperMuscle.includes('CHEST') || upperMuscle.includes('PECTORALIS')) return 'Chest';
+  if (upperMuscle.includes('BACK') || upperMuscle.includes('LATS') || upperMuscle.includes('TRAPEZIUS')) return 'Back';
+  if (upperMuscle.includes('LEG') || upperMuscle.includes('QUAD') || upperMuscle.includes('CALF') || upperMuscle.includes('GLUTE') || upperMuscle.includes('HAMSTRING')) return 'Legs';
+  if (upperMuscle.includes('ARM') || upperMuscle.includes('BICEP') || upperMuscle.includes('TRICEP') || upperMuscle.includes('FOREARM')) return 'Arms';
+  if (upperMuscle.includes('SHOULDER') || upperMuscle.includes('DELTOID')) return 'Shoulders';
+  if (upperMuscle.includes('ABS') || upperMuscle.includes('ABDOMINAL')) return 'Abs';
+  return 'Full Body'; // Default
+};
+
 // POST import exercise
 router.post('/import', async (req, res) => {
   try {
@@ -97,11 +122,11 @@ router.post('/import', async (req, res) => {
     let exercise = await Exercise.findOne({ name: req.body.name });
     if (exercise) return res.json(exercise);
 
-    // Create new
+    // Create new with mapped values
     exercise = new Exercise({
       name: req.body.name,
-      category: req.body.category || 'Strength',
-      muscleGroup: req.body.muscleGroup || 'Full Body',
+      category: mapCategory(req.body.category),
+      muscleGroup: mapMuscleGroup(req.body.muscleGroup),
       equipment: req.body.equipment || 'None',
       instructions: req.body.instructions,
       imageUrl: req.body.imageUrl

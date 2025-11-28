@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import { View, Text, TouchableOpacity, TextInput, Modal, ActivityIndicator, FlatList, RefreshControl } from 'react-native';
+import { View, Text, TouchableOpacity, TextInput, Modal, ActivityIndicator, FlatList, RefreshControl, Alert } from 'react-native';
 import { Image } from 'expo-image';
 import { Ionicons } from '@expo/vector-icons';
 import { getExercises, createExercise, searchExercises, importExercise } from '../../services/api';
@@ -62,18 +62,27 @@ export default function Exercises() {
 
     const handleImport = async (exercise: Exercise) => {
         const result = await importExercise(exercise);
-        if (result) {
+        if (result && !result.error) {
+            Alert.alert('Success', 'Exercise imported!');
             performSearch();
+        } else {
+            Alert.alert('Error', result?.error || 'Failed to import exercise');
         }
     };
 
     const handleAddExercise = async () => {
-        if (!newExercise.name) return;
+        if (!newExercise.name) {
+            Alert.alert('Error', 'Please enter an exercise name');
+            return;
+        }
         const result = await createExercise(newExercise);
-        if (result) {
+        if (result && !result.error) {
+            Alert.alert('Success', 'Exercise created!');
             setModalVisible(false);
             setNewExercise({ name: '', category: 'Strength', muscleGroup: 'Full Body' });
             loadExercises();
+        } else {
+            Alert.alert('Error', result?.error || 'Failed to create exercise');
         }
     };
 

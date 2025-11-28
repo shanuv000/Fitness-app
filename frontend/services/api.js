@@ -1,8 +1,10 @@
 import { Platform } from 'react-native';
 
-// Use LAN IP for physical devices to connect to the server running on the computer
-// Replace '192.168.1.5' with your actual computer's IP if it changes
-const API_URL = 'http://192.168.1.5:5001/api';
+// Production API URL (Render)
+const API_URL = 'https://fitness-app-a4vr.onrender.com/api';
+
+// Development API URL (Uncomment to use)
+// const API_URL = 'http://192.168.1.5:5001/api';
 
 export const getWorkouts = async () => {
   try {
@@ -52,10 +54,14 @@ export const createExercise = async (exerciseData) => {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(exerciseData),
     });
+    if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Failed to create exercise');
+    }
     return await response.json();
   } catch (error) {
     console.error('Error creating exercise:', error);
-    return null;
+    return { error: error.message };
   }
 };
 
@@ -78,10 +84,14 @@ export const importExercise = async (exerciseData) => {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(exerciseData),
     });
+    if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Failed to import exercise');
+    }
     return await response.json();
   } catch (error) {
     console.error('Error importing exercise:', error);
-    return null;
+    return { error: error.message };
   }
 };
 
