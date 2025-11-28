@@ -1,7 +1,10 @@
 import { Platform } from 'react-native';
 
-// Production API URL (Render)
-const API_URL = 'https://fitness-app-a4vr.onrender.com/api';
+// Production API URL (Vercel)
+const API_URL = 'https://fitness-app-nu-nine.vercel.app/api';
+
+// Production API URL (Render) - Backup
+// const API_URL = 'https://fitness-app-a4vr.onrender.com/api';
 
 // Development API URL (Uncomment to use)
 // const API_URL = 'http://192.168.1.5:5001/api';
